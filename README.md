@@ -6,7 +6,7 @@
 **Roll No.:** 10699  
 **Class:** T.E. Computer Engineering – COMPS B  
 **Subject:** Cloud Computing  
-**Academic Year:** 2026–2027
+**Academic Year:** 2026–2027  
 
 ---
 
@@ -18,7 +18,6 @@ The assignment demonstrates:
 
 - AWS RDS PostgreSQL deployment
 - Secure EC2-to-RDS connectivity
-- Migration of the existing Lab 4 Redmine PostgreSQL database to RDS
 - Redmine application connectivity with RDS
 - Create, Read, Update and Delete (CRUD) operations
 - Security Group based database access control
@@ -35,25 +34,26 @@ The application architecture used for this assignment is:
                            | HTTP : 80
                            v
                  +----------------------+
-                 |   Amazon EC2         |
-                 |   redmine-lab4       |
+                 |      Amazon EC2      |
+                 |      redmine-lab4    |
                  |                      |
-                 |   Nginx : 80         |
-                 |       |              |
-                 |       v              |
-                 |   Redmine / Puma     |
-                 |   127.0.0.1:3000    |
+                 |      Nginx : 80      |
+                 |          |           |
+                 |          v           |
+                 |    Redmine / Puma    |
+                 |    127.0.0.1:3000   |
                  +----------+-----------+
                             |
                             | PostgreSQL : 5432
-                            | SSL
+                            |
                             v
                  +----------------------+
-                 |   Amazon RDS         |
-                 |   PostgreSQL         |
-                 |   redmine-lab5-db    |
-                 |   Database: lab5db   |
+                 |      Amazon RDS       |
+                 |      PostgreSQL       |
+                 |      redmine-lab5-db  |
+                 |      Database: lab5db |
                  +----------------------+
+```
 
 ---
 
@@ -67,7 +67,7 @@ An Amazon RDS PostgreSQL instance named `redmine-lab5-db` was deployed for the L
 - **DB Instance Identifier:** `redmine-lab5-db`
 - **Database Name:** `lab5db`
 - **Port:** `5432`
-- **Purpose:** Store the Redmine application database externally from the EC2 instance.
+- **Purpose:** Host the PostgreSQL database used by the Redmine application.
 
 ### RDS Evidence
 
@@ -77,13 +77,13 @@ An Amazon RDS PostgreSQL instance named `redmine-lab5-db` was deployed for the L
 
 ## 4. RDS Security Configuration
 
-A dedicated security group `rds-lab5-sg` was configured for the RDS instance.
+A dedicated Security Group named `rds-lab5-sg` was configured for the RDS instance.
 
-The inbound PostgreSQL rule allows access **only from the EC2 Security Group** used by the Redmine EC2 instance.
+The inbound PostgreSQL rule allows access only from the Security Group associated with the EC2 instance running Redmine.
 
 No `0.0.0.0/0` inbound rule was configured for PostgreSQL.
 
-This ensures that the database is not directly accessible from the public internet.
+Therefore, the RDS database is not directly exposed to the public internet.
 
 ### Security Configuration Evidence
 
@@ -93,17 +93,17 @@ This ensures that the database is not directly accessible from the public intern
 
 ## 5. EC2 to RDS Connection
 
-The existing Redmine application from Lab 4 was configured to use the PostgreSQL database hosted on Amazon RDS.
+The Redmine application running on the Lab 4 EC2 instance was connected to the PostgreSQL database hosted on Amazon RDS.
 
-The Redmine application runs on the EC2 instance using:
+The application architecture uses:
 
 - **Nginx:** Port 80
 - **Redmine/Puma:** Port 3000 internally
-- **RDS PostgreSQL:** Port 5432
+- **PostgreSQL RDS:** Port 5432
 
-The EC2 instance communicates with RDS through the private AWS network using the configured Security Group rule.
+The EC2 instance communicates with the RDS database through the AWS network using the configured Security Group rule.
 
-### Connection Evidence
+### EC2-RDS Connection Evidence
 
 ![EC2 to RDS](Ec2-rds.png)
 
@@ -111,9 +111,9 @@ The EC2 instance communicates with RDS through the private AWS network using the
 
 ## 6. Redmine Application Running
 
-The Redmine application was successfully started on the Lab 4 EC2 instance and accessed through the EC2 public IP.
+The Redmine application was successfully started on the Lab 4 EC2 instance.
 
-The application was available through Nginx on HTTP port 80.
+The application is accessed through Nginx on HTTP port 80 using the EC2 public IP address.
 
 ### Application Evidence
 
@@ -123,29 +123,35 @@ The application was available through Nginx on HTTP port 80.
 
 ## 7. CRUD Operations
 
-The application was used to demonstrate all four mandatory CRUD operations using the RDS-backed Redmine application.
+The RDS-backed Redmine application was used to demonstrate all four mandatory CRUD operations.
 
 ### 7.1 Create
 
-A new record/issue was created successfully through the Redmine application.
+A new issue/record was successfully created through the Redmine application.
 
 ![CRUD Create](CRUD%20Create.png)
 
+---
+
 ### 7.2 Read
 
-The created record was successfully displayed and retrieved from the database.
+The created issue/record was successfully retrieved and displayed through the Redmine application.
 
 ![CRUD Read](CRUD%20Read.png)
 
+---
+
 ### 7.3 Update
 
-The existing record was modified successfully through the application.
+The existing issue/record was successfully modified through the Redmine application.
 
 ![CRUD Update](CRUD%20Update.png)
 
+---
+
 ### 7.4 Delete
 
-The record was successfully deleted through the application.
+The issue/record was successfully deleted through the Redmine application.
 
 ![CRUD Delete](CRUD%20Delete.png)
 
@@ -159,7 +165,8 @@ The following security measures were implemented:
 2. RDS inbound access is restricted to the EC2 Security Group.
 3. PostgreSQL is not exposed using `0.0.0.0/0`.
 4. The Redmine application is accessed through Nginx on port `80`.
-5. The database is accessed by the EC2-hosted application rather than directly by external clients.
+5. The database is accessed by the EC2-hosted Redmine application.
+6. Direct public access to the RDS PostgreSQL database is prevented through the Security Group configuration.
 
 ---
 
@@ -171,20 +178,41 @@ The deployed Redmine application can be accessed at:
 
 ---
 
-## 10. Repository
+## 10. GitHub Repository
 
-GitHub Repository:
+This repository contains the README, AWS configuration evidence, application evidence and CRUD screenshots.
 
-**https://github.com/SAnto-spec/cloud-computing-lab5-rds-redmine-10699**
-
-The repository contains the README, AWS configuration evidence, application evidence and CRUD screenshots.
+**Repository:**  
+https://github.com/SAnto-spec/cloud-computing-lab5-rds-redmine-10699
 
 ---
 
-## 11. Conclusion
+## 11. Evidence Summary
 
-AWS RDS PostgreSQL was successfully deployed and integrated with the Redmine application running on the Lab 4 EC2 instance. The RDS database was secured by allowing PostgreSQL access only from the EC2 Security Group.
+| Requirement | Evidence |
+|---|---|
+| RDS PostgreSQL deployed | `RDS instance.png` |
+| RDS Security Group | `RDS security groups.png` |
+| EC2-RDS connection | `Ec2-rds.png` |
+| EC2 Redmine application running | `RedmineRunning.png` |
+| Create operation | `CRUD Create.png` |
+| Read operation | `CRUD Read.png` |
+| Update operation | `CRUD Update.png` |
+| Delete operation | `CRUD Delete.png` |
 
-The running application successfully demonstrated all four mandatory CRUD operations — Create, Read, Update and Delete — using the RDS-backed database.
+---
+
+## 12. Conclusion
+
+AWS RDS PostgreSQL was successfully deployed and integrated with the Redmine application running on the Lab 4 EC2 instance.
+
+The RDS database was secured by allowing PostgreSQL access only from the EC2 Security Group, preventing direct public database access.
+
+The running Redmine application successfully demonstrated all four mandatory CRUD operations:
+
+- **Create**
+- **Read**
+- **Update**
+- **Delete**
 
 Thus, the requirements of **Cloud Computing Lab 5 – Assignment 1** were successfully completed.
